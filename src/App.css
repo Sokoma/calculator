@@ -1,38 +1,142 @@
-.App {
-  text-align: center;
+* {
+  box-sizing: border-box;
+  font-weight: 600;
+  font-size: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  background-color: #d0d0d0;
+  background-image: url("./static/Background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.page-frame {
+  display: block;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-top: 35px;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
+.header-wrapper {
+  color: white;
+  background-color: black;
+  padding-left: 15px;
+  text-transform: uppercase;
+}
+.half-block {
+  display: inline-flex;
   flex-direction: column;
+  width: 50%;
+}
+.input-block {
+  display: block;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.input-block input, .input-block select {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: black;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 15px;
+  text-align: center;
+  position: relative;
+}
+.name-wrapper input {
+  display: block;
+  display: block;
+width: 100%;
+border: none;
+padding: 10px 15px;
+}
+
+.input-block.hasPlus::after {
+  content: "+";
+  position: absolute;
+  display: block;
+  font-size: 30px;
+  color: white;
+  top: 6px;
+  right: 15px;
+  opacity: .5;
+}
+
+.input-block > input, .input-block > select{
+  width: 50%;
+  display: inline-block;
+}
+
+.input-block label {
+  flex: 1;
+  display: inline-flex;
+  justify-content: flex-start;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  background-color: #d65e31;
+  padding: 15px;
+  width: 50%;
+}
+
+.input-block .split-input {
+  position: relative;
+  display: inline-block;
+  width: 50%;
+  flex: 1;
+}
+
+.input-block .split-input input {
+  width: 50%;
+  display: inline-block;
+}
+
+.normal-damage {
+  text-align: right !important;
+  position: relative;
+}
+
+.critical-damage {
+  text-align: left !important;
+}
+
+.split-input::after {
+  content: "/";
+  position: absolute;
+  display: block;
+  font-size: 30px;
+color: white;
+opacity: .5;
+top: 6px;
+left: calc(50% - 5px);
+}
+
+.controls-block{
+  padding: 15px 0;
+}
+
+.results-table {
+  width: 100%;
+  text-align: left;
+  background-color: black;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.results-table th, .results-table td {
+  padding: 5px 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.results-table th {
+  border: 1px solid grey;
 }
+
+.results-table td {
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.results-table tbody tr {
+  background-color: #d65e31;
+}
+
