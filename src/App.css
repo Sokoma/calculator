@@ -27,6 +27,14 @@ body {
   flex-direction: column;
   width: 50%;
 }
+
+@media only screen and (max-width: 600px) {
+  .half-block {
+    display: inline-flex;
+    flex-direction: column;
+    width: 100%;
+  }
+}
 .input-block {
   display: block;
   text-transform: uppercase;
