@@ -140,3 +140,54 @@ left: calc(50% - 5px);
   background-color: #d65e31;
 }
 
+.input-block:hover .multiselect {
+  display: block;
+}
+
+.multiselect {
+  display: none;
+  padding: 15px;
+  width: 300px;
+  background-color: black;
+  border: 2px solid #d65e31;
+  position: absolute;
+  right: 0;
+  z-index: 5;
+  color: white;
+  overflow-wrap: anywhere;
+  box-shadow: 0 0 8px black;
+}
+
+.multiselect:before {
+  position: absolute;
+  content: "";
+  width: 0px;
+  height: 0px;
+  border-top: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #d65e31;
+  border-left: 10px solid transparent;
+  top: -20px;
+  right: 40%;
+}
+
+.multiselect span {
+  display: inline-block;
+  font-size: 16px;
+  padding-right: 8px;
+  position: relative;
+  cursor: pointer;
+}
+
+.multiselect span:hover {
+  color:#d0d0d0
+}
+
+.multiselect span::after {
+  content: " ,";
+  display: block;
+  position: absolute;
+  right: 4px;
+  bottom: 0;
+  font-size: 16px;
+}

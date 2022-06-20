@@ -1,19 +1,49 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useState } from "react";
+import { Multiselect } from "./Multiselect";
 
 export const Inputs = ({ onAdd }) => {
-    const [weaponName, setWeaponName] = useState("");
-    const [targetName, setTargetName] = useState("");
+    const [weaponName, setWeaponName] = useState("Weapon");
+    const [targetName, setTargetName] = useState("Target");
     const [normalDamage, setNormalDamage] = useState(0);
     const [criticalDamage, setCriticalDamage] = useState(0);
     const [nAttacks, setNAttacks] = useState(0);
     const [balisticSkill, setBalisticSkill] = useState(0);
-    const [wSpecialRules, setWSpecialRules] = useState("");
+    const [wSpecialRules, setWSpecialRules] = useState([]);
     const [tSpecialRules, setTSpecialRules] = useState("");
     const [defense, setDefense] = useState(3);
     const [save, setSave] = useState(0);
     const [wounds, setWounds] = useState(0);
     const [inCover, setInCover] = useState(0);
+
+    const wSpecialRulesInput = useRef(null);
+    const tSpecialRulesInput = useRef(null);
+
+    const wSpecialRulesList = [
+        "AP1",
+        "AP2",
+        "!P1",
+        "!P2",
+        "!Rending",
+        "Lethal5+",
+        "Lethal4+",
+        "NoCover",
+        "!MW1",
+        "!MW2",
+        "!MW3",
+        "!MW4",
+        "Relentless",
+        "Ceaseless",
+        "Balanced",
+        "!Dakka"
+    ];
+
+    const tSpecialRulesList = [
+        "Invul5+",
+        "Invul4+",
+        "IgnoreWound6+",
+        "IgnoreWound5+"
+    ]
 
     const config = {
         nRepetitions: 100000,
@@ -28,9 +58,7 @@ export const Inputs = ({ onAdd }) => {
         let currentDefense = defense;
 
         if (wSpecialRules.includes("AP1")) {
-            console.log("AP1")
             currentDefense -= 1;
-            console.log(currentDefense)
         }
         
         if (wSpecialRules.includes("AP2")) {
@@ -48,27 +76,63 @@ export const Inputs = ({ onAdd }) => {
             // Shooting
             let successfulHits = 0;
             let criticalHits = 0;
-            let appliedEffects = [];
             let damageDealt = 0;
-            
+            let balancedUsed = false;
+
             for (let si = 0; si < nAttacks; si++) {
                 let roll = diceRoll(6);
-                if(roll >= balisticSkill) {
-                    if(roll === 6) {
+                if (roll >= balisticSkill) {
+                    if (wSpecialRules.includes("Lethal5+") && roll >= 5) {
+                        criticalHits++;
+                    } else if (wSpecialRules.includes("Lethal4+") && roll >= 4){
+                        criticalHits++;
+                    } else if (roll === 6) {
                         criticalHits++;
                     } else {
                         successfulHits++;
                     }
                 } else if (wSpecialRules.includes("Relentless")) {
                     roll = diceRoll(6);
-                    if(roll >= balisticSkill) {
-                        if(roll === 6) {
+                    if (roll >= balisticSkill) {
+                        if (wSpecialRules.includes("Lethal5+") && roll >= 5) {
                             criticalHits++;
-                        }else{
+                        } else if (wSpecialRules.includes("Lethal4+") && roll >= 4){
+                            criticalHits++;
+                        } else if (roll === 6) {
+                            criticalHits++;
+                        } else {
                             successfulHits++;
                         }
                     }
-                }       
+                } else if (wSpecialRules.includes("Ceaseless") && roll === 1 ) {
+                    roll = diceRoll(6);
+                    if (roll >= balisticSkill) {
+                        if (wSpecialRules.includes("Lethal5+") && roll >= 5) {
+                            criticalHits++;
+                        } else if (wSpecialRules.includes("Lethal4+") && roll >= 4){
+                            criticalHits++;
+                        } else if (roll === 6) {
+                            criticalHits++;
+                        } else {
+                            successfulHits++;
+                        }
+                    }
+                } else if (wSpecialRules.includes("Balanced") && !balancedUsed) {
+                    roll = diceRoll(6);
+                    if (roll >= balisticSkill) {
+                        if (wSpecialRules.includes("Lethal5+") && roll >= 5) {
+                            criticalHits++;
+                        } else if (wSpecialRules.includes("Lethal4+") && roll >= 4){
+                            criticalHits++;
+                        } else if (roll === 6) {
+                            criticalHits++;
+                        } else {
+                            successfulHits++;
+                        }
+                    }
+                    balancedUsed = true;
+                }
+                //TODO - add resolveShotRolls function
             }
         
             if (config.logging) {
@@ -103,20 +167,38 @@ export const Inputs = ({ onAdd }) => {
             if (wSpecialRules.includes("!MW3") && criticalHits) {
                 damageDealt += criticalHits * 3;
             }
+
+            if (wSpecialRules.includes("!MW2") && criticalHits) {
+                damageDealt += criticalHits * 2;
+            }
+
+            if (wSpecialRules.includes("!MW1") && criticalHits) {
+                damageDealt += criticalHits * 1;
+            }
         
             // Defense
             let successfulSaves = 0;
             let criticalSaves = 0;
+
+            if (tSpecialRules.includes("Invul5+")) {
+                defenseMod = 0;
+                currentDefense = 3;
+                setSave(5);
+            } else if (tSpecialRules.includes("Invul4+")) {
+                defenseMod = 0;
+                currentDefense = 3;
+                setSave(4);
+            }
         
-            if(inCover && !wSpecialRules.includes("NoCover")) {
+            if (inCover && !wSpecialRules.includes("NoCover")) {
                 defenseMod--;
                 successfulSaves++;
             }
         
             for (let di = 0; di < currentDefense + defenseMod; di++) {
                 let roll = diceRoll(6);
-                if(roll >= save) {
-                    if(roll === 6) {
+                if (roll >= save) {
+                    if (roll === 6) {
                         criticalSaves++;
                     }else{
                         successfulSaves++;
@@ -136,7 +218,9 @@ export const Inputs = ({ onAdd }) => {
             
             successfulSaves += criticalSaves;
         
-            while(successfulSaves > 0 && successfulHits > 0) {
+            while(successfulSaves > 0 && successfulHits > 0 && 
+                !(successfulSaves === 2 && successfulHits === 1 && criticalHits === 1)
+                ) {
                 successfulSaves--;
                 successfulHits--;
             }
@@ -144,10 +228,22 @@ export const Inputs = ({ onAdd }) => {
             while(successfulSaves > 1 && criticalHits > 0) {
                 successfulSaves--;
                 successfulSaves--;
-                successfulHits--;
+                criticalHits--;
             }
         
             damageDealt = criticalHits * criticalDamage + successfulHits * normalDamage;
+
+            if (tSpecialRules.includes("IgnoreWound6+") || tSpecialRules.includes("IgnoreWound5+")) {
+                let damageIgnored = 0;
+                for (let index = 0; index < damageDealt; index++) {
+                    let roll = diceRoll(6);
+                    if ((roll === 6 && tSpecialRules.includes("IgnoreWound6+")) || (roll >= 5 && tSpecialRules.includes("IgnoreWound5+"))) {
+                        damageIgnored++;
+                    }
+                }
+                damageDealt -= damageIgnored;
+            }
+            
         
             if (damageDealt >= wounds) {
                 targetKilled++;
@@ -195,7 +291,8 @@ export const Inputs = ({ onAdd }) => {
             </div>
             <div className="input-block">
                 <label>Special Rules</label>
-                <input placeholder="__, __, __" id="wSpecialRules" type="text" onChange={(e)=>setWSpecialRules(e.target.value)}/>
+                <input ref={wSpecialRulesInput} placeholder="__, __, __" id="wSpecialRules" type="text" disabled={true} value={wSpecialRules}/>
+                <Multiselect state={wSpecialRules} updateState={setWSpecialRules} inputElement={wSpecialRulesInput.current} options={wSpecialRulesList} classSuffix="wSpeacialRules"/>
             </div>
         </div><div className="target-block half-block">
             <div className="header-wrapper">
@@ -218,7 +315,8 @@ export const Inputs = ({ onAdd }) => {
             </div>
             <div className="input-block">
                 <label>Special Rules</label>
-                <input placeholder="__, __, __" id="tSpecialRules" type="text" onChange={(e)=>setWSpecialRules(e.target.value)}/>
+                <input ref={tSpecialRulesInput} placeholder="__, __, __" id="tSpecialRules" type="text" disabled={true} value={tSpecialRules}/>
+                <Multiselect state={tSpecialRules} updateState={setTSpecialRules} inputElement={tSpecialRulesInput.current} options={tSpecialRulesList} classSuffix="wSpeacialRules"/>
             </div>
             <div className="input-block">
                 <label>Is in Cover?</label>
