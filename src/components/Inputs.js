@@ -91,48 +91,25 @@ export const Inputs = ({ onAdd }) => {
                     } else {
                         successfulHits++;
                     }
-                } else if (wSpecialRules.includes("Relentless")) {
-                    roll = diceRoll(6);
-                    if (roll >= balisticSkill) {
-                        if (wSpecialRules.includes("Lethal5+") && roll >= 5) {
-                            criticalHits++;
-                        } else if (wSpecialRules.includes("Lethal4+") && roll >= 4){
-                            criticalHits++;
-                        } else if (roll === 6) {
-                            criticalHits++;
-                        } else {
-                            successfulHits++;
+                } else if (
+                    wSpecialRules.includes("Relentless") ||
+                    wSpecialRules.includes("Ceaseless") && roll === 1 ||
+                    wSpecialRules.includes("Balanced") && !balancedUsed
+                    ) {
+                        roll = diceRoll(6);
+                        if (roll >= balisticSkill) {
+                            if (wSpecialRules.includes("Lethal5+") && roll >= 5) {
+                                criticalHits++;
+                            } else if (wSpecialRules.includes("Lethal4+") && roll >= 4){
+                                criticalHits++;
+                            } else if (roll === 6) {
+                                criticalHits++;
+                            } else {
+                                successfulHits++;
+                            }
                         }
-                    }
-                } else if (wSpecialRules.includes("Ceaseless") && roll === 1 ) {
-                    roll = diceRoll(6);
-                    if (roll >= balisticSkill) {
-                        if (wSpecialRules.includes("Lethal5+") && roll >= 5) {
-                            criticalHits++;
-                        } else if (wSpecialRules.includes("Lethal4+") && roll >= 4){
-                            criticalHits++;
-                        } else if (roll === 6) {
-                            criticalHits++;
-                        } else {
-                            successfulHits++;
-                        }
-                    }
-                } else if (wSpecialRules.includes("Balanced") && !balancedUsed) {
-                    roll = diceRoll(6);
-                    if (roll >= balisticSkill) {
-                        if (wSpecialRules.includes("Lethal5+") && roll >= 5) {
-                            criticalHits++;
-                        } else if (wSpecialRules.includes("Lethal4+") && roll >= 4){
-                            criticalHits++;
-                        } else if (roll === 6) {
-                            criticalHits++;
-                        } else {
-                            successfulHits++;
-                        }
-                    }
-                    balancedUsed = true;
-                }
-                //TODO - add resolveShotRolls function
+                        balancedUsed = true;
+                    } 
             }
         
             if (config.logging) {
