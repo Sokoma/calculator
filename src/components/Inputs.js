@@ -71,6 +71,7 @@ export const Inputs = ({ onAdd }) => {
         
         let totalDamageDealt = 0;
         let targetKilled = 0;
+        let damageMap = {};
         
         for (let rep = 0; rep < config.nRepetitions; rep++) {
             // Shooting
@@ -93,8 +94,8 @@ export const Inputs = ({ onAdd }) => {
                     }
                 } else if (
                     wSpecialRules.includes("Relentless") ||
-                    wSpecialRules.includes("Ceaseless") && roll === 1 ||
-                    wSpecialRules.includes("Balanced") && !balancedUsed
+                    (wSpecialRules.includes("Ceaseless") && roll === 1) ||
+                    (wSpecialRules.includes("Balanced") && !balancedUsed)
                     ) {
                         roll = diceRoll(6);
                         if (roll >= balisticSkill) {
@@ -227,16 +228,26 @@ export const Inputs = ({ onAdd }) => {
             }
         
             totalDamageDealt += damageDealt;
+            if (typeof damageMap[String(damageDealt)] === 'undefined') {
+                damageMap[String(damageDealt)] = 1;
+            } else {
+                damageMap[String(damageDealt)]++;
+            }
         
             if (config.logging) {
                 console.log("normal hits suffered:" + successfulHits);
                 console.log("critical hits suffered:" + criticalHits);
             }
         }
-        
+
+        Object.keys(damageMap).forEach(key => {
+            damageMap[key] = damageMap[key]/config.nRepetitions * 100;
+          });
+
         //createResultRecord();
-        onAdd(weaponName, targetName, (totalDamageDealt/config.nRepetitions).toFixed(1), ((targetKilled / config.nRepetitions) * 100).toFixed(1) )
+        onAdd(weaponName, targetName, (totalDamageDealt/config.nRepetitions).toFixed(1), ((targetKilled / config.nRepetitions) * 100).toFixed(1), damageMap)
         
+        console.log();
         console.log("Average damage dealt: " + totalDamageDealt / config.nRepetitions);
         console.log("Chance to kill: " + ((targetKilled / config.nRepetitions) * 100) + " %");
         console.log("For the Emperor!")

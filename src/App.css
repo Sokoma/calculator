@@ -146,6 +146,7 @@ left: calc(50% - 5px);
 
 .results-table tbody tr {
   background-color: #d65e31;
+  position: relative;
 }
 
 .input-block:hover .multiselect {
@@ -198,4 +199,56 @@ left: calc(50% - 5px);
   right: 4px;
   bottom: 0;
   font-size: 16px;
+}
+.results-table tbody tr:hover .distributionChart {
+  display: block;
+}
+.distributionChart {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  height: 200px;
+  background-color: black;
+  padding: 35px 15px;
+}
+
+.scale {
+  width: 100%;
+  height: 100%;
+  border-left: 3px solid #d65e31;
+  border-bottom: 3px solid #d65e31;
+  display: block;
+}
+
+.column {
+  display: inline-block;
+  background-color: #d65e31;
+  position: relative;
+  box-shadow: inset 0 0 2px black;
+}
+
+.column::before {
+  content: attr(data-damage);
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+}
+
+.column::after {
+  display: none;
+  content: attr(data-percentage);
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.column:hover::after {
+  display: block;
 }

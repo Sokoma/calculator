@@ -6,8 +6,8 @@ import './App.css';
 function App() {
   const [results, setResults] = useState([]);
 
-  const addResult = (weaponName, targetName, averageDamageDealt, chancetoKill) => {
-    const result = {weaponName, targetName, averageDamageDealt, chancetoKill}
+  const addResult = (weaponName, targetName, averageDamageDealt, chancetoKill, distribution) => {
+    const result = {weaponName, targetName, averageDamageDealt, chancetoKill, distribution};
     setResults([...results, result])
   }
 
